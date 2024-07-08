@@ -1,0 +1,71 @@
+1, a_value annotation, 29, 23
+1, a_value annotation, 300, 20
+1, a_value annotation, 294, 49
+1, a_value annotation, 34, 50
+2, a_value legend, 317, 177
+2, a_value legend, 439, 178
+2, a_value legend, 438, 196
+2, a_value legend, 316, 198
+3, a_item label, 736, 496
+3, a_item label, 753, 493
+3, a_item label, 753, 472
+3, a_item label, 904, 470
+3, a_item label, 904, 490
+3, a_item label, 918, 495
+3, a_item label, 915, 518
+3, a_item label, 734, 518
+4, a_data point, 825, 205
+4, a_data point, 839, 207
+4, a_data point, 840, 223
+4, a_data point, 824, 222
+5, a_value, 941, 196
+5, a_value, 969, 196
+5, a_value, 966, 267
+5, a_value, 941, 265
+6, b_value annotation, 28, 50
+6, b_value annotation, 30, 21
+6, b_value annotation, 304, 17
+6, b_value annotation, 300, 49
+7, b_value, 941, 152
+7, b_value, 966, 152
+7, b_value, 964, 176
+7, b_value, 939, 174
+8, b_data point, 147, 164
+8, b_data point, 205, 163
+8, b_data point, 205, 147
+8, b_data point, 147, 145
+9, b_data point, 66, 160
+9, b_data point, 132, 163
+9, b_data point, 132, 146
+9, b_data point, 84, 147
+10, b_value, 32, 495
+10, b_value, 32, 518
+10, b_value, 213, 517
+10, b_value, 212, 494
+10, b_value, 199, 493
+10, b_value, 200, 473
+10, b_value, 72, 471
+10, b_value, 64, 485
+11, b_value legend, 435, 198
+11, b_value legend, 316, 198
+11, b_value legend, 317, 178
+11, b_value legend, 436, 176
+12, c_value annotation, 28, 19
+12, c_value annotation, 28, 50
+12, c_value annotation, 296, 50
+12, c_value annotation, 295, 18
+13, c_data point, 105, 143
+13, c_data point, 125, 143
+13, c_data point, 123, 161
+13, c_data point, 104, 161
+14, c_value legend, 437, 201
+14, c_value legend, 435, 178
+14, c_value legend, 317, 177
+14, c_value legend, 316, 198
+15, c_value, 56, 471
+15, c_value, 140, 470
+15, c_value, 143, 483
+15, c_value, 213, 496
+15, c_value, 214, 517
+15, c_value, 32, 518
+15, c_value, 31, 494

@@ -1,0 +1,17 @@
+imageID	filename
+1	economist_daily_chart_103.png
+4	economist_daily_chart_153.png
+5	economist_daily_chart_165.png
+7	economist_daily_chart_202.png
+8	economist_daily_chart_242.png
+11	economist_daily_chart_35.png
+12	economist_daily_chart_380.png
+13	economist_daily_chart_390.png
+14	economist_daily_chart_392.png
+16	economist_daily_chart_416.png
+17	vis586.png
+22	economist_daily_chart_521.png
+23	economist_daily_chart_54.png
+24	economist_daily_chart_85.png
+29	visMost505.png
+30	visMost55.png

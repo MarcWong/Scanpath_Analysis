@@ -1,0 +1,76 @@
+1, a_value annotation, 30, 22
+1, a_value annotation, 244, 21
+1, a_value annotation, 243, 47
+1, a_value annotation, 224, 76
+1, a_value annotation, 29, 79
+2, a_value legend, 398, 54
+2, a_value legend, 523, 53
+2, a_value legend, 521, 78
+2, a_value legend, 395, 81
+3, a_item label, 31, 735
+3, a_item label, 90, 736
+3, a_item label, 88, 757
+3, a_item label, 29, 758
+4, a_data point, 315, 731
+4, a_data point, 324, 730
+4, a_data point, 326, 758
+4, a_data point, 315, 757
+5, a_value, 310, 115
+5, a_value, 332, 116
+5, a_value, 332, 135
+5, a_value, 312, 135
+6, b_value annotation, 27, 23
+6, b_value annotation, 28, 80
+6, b_value annotation, 217, 78
+6, b_value annotation, 242, 50
+6, b_value annotation, 241, 22
+7, b_value legend, 395, 54
+7, b_value legend, 520, 57
+7, b_value legend, 521, 81
+7, b_value legend, 395, 79
+8, b_value, 548, 114
+8, b_value, 569, 115
+8, b_value, 570, 135
+8, b_value, 544, 135
+9, b_data point, 557, 152
+9, b_data point, 669, 152
+9, b_data point, 669, 176
+9, b_data point, 557, 177
+10, b_data point, 558, 191
+10, b_data point, 640, 192
+10, b_data point, 639, 214
+10, b_data point, 559, 216
+11, b_item label, 35, 153
+11, b_item label, 83, 155
+11, b_item label, 82, 175
+11, b_item label, 32, 175
+12, b_item label, 35, 192
+12, b_item label, 109, 194
+12, b_item label, 107, 212
+12, b_item label, 32, 215
+12, b_item label, 29, 195
+13, c_value annotation, 26, 20
+13, c_value annotation, 245, 22
+13, c_value annotation, 243, 48
+13, c_value annotation, 220, 78
+13, c_value annotation, 29, 81
+14, c_value legend, 555, 57
+14, c_value legend, 647, 59
+14, c_value legend, 647, 81
+14, c_value legend, 553, 80
+15, c_data point, 373, 657
+15, c_data point, 401, 658
+15, c_data point, 400, 679
+15, c_data point, 373, 681
+16, c_item label, 32, 657
+16, c_item label, 95, 658
+16, c_item label, 95, 678
+16, c_item label, 35, 678
+17, b_item label, 27, 230
+17, b_item label, 24, 254
+17, b_item label, 153, 254
+17, b_item label, 151, 227
+18, b_data point, 548, 223
+18, b_data point, 546, 258
+18, b_data point, 567, 258
+18, b_data point, 567, 230

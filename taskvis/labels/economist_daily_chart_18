@@ -1,0 +1,56 @@
+1, a_item label, 99, 373
+1, a_item label, 100, 397
+1, a_item label, 164, 399
+1, a_item label, 165, 375
+2, a_value, 715, 376
+2, a_value, 744, 377
+2, a_value, 744, 396
+2, a_value, 716, 396
+3, a_value legend, 682, 81
+3, a_value legend, 779, 83
+3, a_value legend, 771, 150
+3, a_value legend, 688, 150
+4, a_item legend, 97, 113
+4, a_item legend, 170, 118
+4, a_item legend, 156, 153
+4, a_item legend, 95, 153
+5, b_item legend, 93, 110
+5, b_item legend, 170, 113
+5, b_item legend, 166, 153
+5, b_item legend, 96, 152
+6, b_value legend, 782, 81
+6, b_value legend, 773, 152
+6, b_value legend, 692, 151
+6, b_value legend, 680, 82
+7, b_value, 715, 930
+7, b_value, 743, 931
+7, b_value, 743, 958
+7, b_value, 712, 957
+8, b_value, 715, 431
+8, b_value, 740, 432
+8, b_value, 741, 455
+8, b_value, 713, 456
+9, b_item label, 97, 432
+9, b_item label, 136, 431
+9, b_item label, 135, 455
+9, b_item label, 97, 455
+10, b_item label, 95, 931
+10, b_item label, 140, 934
+10, b_item label, 137, 959
+10, b_item label, 95, 956
+11, c_item legend, 168, 152
+11, c_item legend, 169, 115
+11, c_item legend, 94, 112
+11, c_item legend, 94, 151
+12, c_value legend, 679, 79
+12, c_value legend, 782, 82
+12, c_value legend, 772, 152
+12, c_value legend, 692, 148
+13, c_value, 743, 454
+13, c_value, 744, 433
+13, c_value, 713, 431
+13, c_value, 713, 456
+14, c_item label, 139, 453
+14, c_item label, 135, 432
+14, c_item label, 95, 431
+14, c_item label, 95, 454

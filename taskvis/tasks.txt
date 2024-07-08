@@ -1,0 +1,91 @@
+imageID	task	question
+1	A	How many tonnes of food deficits did the region of Middle East & Africa achieve in 2005?
+1	B	Which regions of the world had a food surplus in 1980?
+1	C	Where and when was the highest amount of food surpluses achieved?
+2	A	How many hectares of ecological footprint per person does Australia have?
+2	B	Which western European country has an ecological footprint which is lower than 4.5 hectares per person?
+2	C	Which countries have the highest ecological footprint?
+3	A	Which percentage of adults is using mobile-money in Somalia?
+3	B	Which African countries have more than 40% of mobile-money users?
+3	C	Which African countries have most mobile-money users?
+4	A	How many global weather-related disasters happened in 1995?
+4	B	When was the number of disasters related to floods higher than 25?
+4	C	When did disasters related to floods occur most often?
+5	A	How many deceased organ donors per million population does Brazil have?
+5	B	Which country has 25 of deceased organ donors per million population?
+5	C	Which country has the lowest number of living organ donors per million population?
+6	A	What is the average amount of work experience that students at Stanford have (in months)?
+6	B	Which schools have the average amount of work experience of students longer than 75 months?
+6	C	At which school do students have the highest average amount of work experience (in months)?
+7	A	How much money do people anticipate to spend on personal Christmas gifts in Slovakia?
+7	B	In which countries do people anticipate to spend at least 700$ for personal Christmas gifts?
+7	C	In which country do people anticipate to spend the least money for personal Christmas gifts?
+8	A	How many people died from malaria in Africa in 2007?
+8	B	In which years did more than 0.9 million people die from malaria worldwide?
+8	C	When did most people die from malaria?
+9	A	What was the share of global economic power in Germany in 1973 (in %)?
+9	B	Which countries had more than 12% share of the global economic power in 2010?
+9	C	What was the most economically dominant country in 1870?
+10	A	Is there a military conscription in Canada?
+10	B	Which European countries have military conscription in case of emergency?
+10	C	What is the largest country with conscription in the world?
+11	A	How many paralympic competitors per million population does France have?
+11	B	Which countries have more than 10 paralympic competitors per million population?
+11	C	Which country has most paralympic competitors per million population?
+12	A	What was the average age of western leaders in 2005?
+12	B	In which years was the average age of western leaders at 70 or higher?
+12	C	In which year did the average age of the western leaders reach its maximum?
+13	A	What was the performance of stockmarket 4 days after the terrorist attacts on September 11th, 2001 (in %)?
+13	B	After which disasters did the stock markets drop below 90% after a few days?
+13	C	After which disaster did the stock markets drop most significantly?
+14	A	What was the earthquake magnitude in Kamchatka in 1952?
+14	B	Which earthquakes reached a magnitude of 9 and higher?
+14	C	What was the largest earthquake since 1900?
+15	A	How many hectares of genetically modified crops were planted in Brazil?
+15	B	Which Asian countries have more than 3 million hectares of genetically modified crops?
+15	C	Which country grows the largest amount of genetically modified crops?
+16	A	What was BP's net profit in 2000 (in ?bn)?
+16	B	In which years did BP achieve a net profit higher than 10 ?bn?
+16	C	When did BP achieve the highest net profit?
+17	A	What was the revenue that came from the newspaper advertising (print only) in 1980?
+17	B	When was the newspaper advertisement revenue higher than 50 billion $?
+17	C	When did the newspaper advertisement generate the highest revenue?
+18	A	What is the percentage of adult men who smoke daily in Ukraine?
+18	B	Name the countries where the percentage of adult men who smoke daily is higher than 40%.
+18	C	Which country has the highest ratio of adult men who smoke daily?
+19	A	What is the annual consumption of alcohol per person in Iran?
+19	B	Name the Muslim-majority countries in which the consumption of alcohol is legal.
+19	C	Which Muslim-majority country has the lowest annual alcohol consumption per person?
+20	A	What is the obesity rate in Idaho?
+20	B	Which American states have an obesity rate higher than 32.4%?
+20	C	Which American states have the lowest obesity rates?
+21	A	What is the unemployment rate in Berlin?
+21	B	Which German states have an unemployment rate of more than 12%?
+21	C	Which German states have the lowest unemployment rates?
+22	A	How many pieces of fragmentation debris were in Earth orbit in 2005?
+22	B	In which years did the total amount of space junk increase above 12.000 objects?
+22	C	In which year did the number of space junk objects reach the maximum?
+23	A	What was the age of the oldest gold medallist in Rome in 1960?
+23	B	In which Olympic games were the oldest gold medallists more than 60 years old?
+23	C	Which Olympic game had the youngest competitor?
+24	A	What is the attendance of Universal Studios Hollywood?
+24	B	Which theme parks had more than 15 million attendance in 2011?
+24	C	Which theme park had the highest attendance in 2011?
+25	A	What is the percentage of researches in Denmark who are immigrants?
+25	B	Which countries have more than 30% of researches who emigrate?
+25	C	Which country has the lowest percentage of researchers who emigrate?
+26	A	When was iPhone 3GS announced?
+26	B	Which versions of iPhone do not have a front camera?
+26	C	Which version of iPhone has the best resolution of a camera?
+27	A	How much percentage of renewable energy is contributed by hydro-electric?
+27	B	Which renewable energy sources contribute more than 15% of overall renewable energy?
+27	C	Which bioenergy source produces the highest amount of the renewable energy?
+28	A	How many calendar days of mandatory employment leave does Russia have?
+28	B	Which countries have 5 or fewer days of mandatory employment leave?
+28	C	Which country has the highest number of mandatory employment leave days?
+29	A	What is the fatality rate of Tuberculosis?
+29	B	Which viruses have the fatality rate higher than 50%?
+29	C	Which virus has the longest maximum survival time outside the body?
+30	A	How many copies of Harry Potter were sold?
+30	B	Which books have been sold more than 500 million times in the last 50 years?
+30	C	What is the the most read book in the world?

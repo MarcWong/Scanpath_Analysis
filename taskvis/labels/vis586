@@ -1,0 +1,83 @@
+1, a_value annotation, 37, 70
+1, a_value annotation, 346, 72
+1, a_value annotation, 346, 92
+1, a_value annotation, 37, 92
+2, a_value legend, 338, 167
+2, a_value legend, 467, 167
+2, a_value legend, 463, 194
+2, a_value legend, 337, 197
+3, a_item label, 466, 582
+3, a_item label, 517, 581
+3, a_item label, 518, 601
+3, a_item label, 467, 601
+4, a_data point, 486, 309
+4, a_data point, 506, 309
+4, a_data point, 503, 329
+4, a_data point, 483, 329
+5, a_value, 27, 256
+5, a_value, 59, 256
+5, a_value, 54, 341
+5, a_value, 26, 341
+6, b_value annotation, 34, 69
+6, b_value annotation, 346, 68
+6, b_value annotation, 346, 94
+6, b_value annotation, 39, 93
+7, b_value legend, 337, 163
+7, b_value legend, 677, 167
+7, b_value legend, 678, 194
+7, b_value legend, 336, 196
+8, b_value, 25, 253
+8, b_value, 62, 254
+8, b_value, 61, 278
+8, b_value, 25, 278
+9, b_data point, 535, 271
+9, b_data point, 550, 271
+9, b_data point, 570, 252
+9, b_data point, 596, 220
+9, b_data point, 614, 223
+9, b_data point, 630, 248
+9, b_data point, 641, 269
+9, b_data point, 662, 273
+9, b_data point, 683, 268
+9, b_data point, 698, 256
+9, b_data point, 728, 237
+9, b_data point, 765, 193
+9, b_data point, 779, 228
+9, b_data point, 802, 238
+9, b_data point, 825, 237
+9, b_data point, 837, 244
+9, b_data point, 847, 259
+9, b_data point, 851, 271
+9, b_data point, 886, 270
+9, b_data point, 866, 224
+9, b_data point, 841, 208
+9, b_data point, 813, 210
+9, b_data point, 802, 216
+9, b_data point, 780, 170
+9, b_data point, 752, 177
+9, b_data point, 736, 192
+9, b_data point, 711, 224
+9, b_data point, 669, 253
+9, b_data point, 656, 249
+9, b_data point, 639, 219
+9, b_data point, 624, 201
+9, b_data point, 605, 195
+9, b_data point, 584, 204
+9, b_data point, 554, 233
+9, b_data point, 538, 247
+10, b_item label, 466, 577
+10, b_item label, 938, 580
+10, b_item label, 941, 604
+10, b_item label, 464, 603
+11, c_value annotation, 34, 93
+11, c_value annotation, 32, 67
+11, c_value annotation, 345, 70
+11, c_value annotation, 346, 94
+12, c_data point, 762, 171
+12, c_data point, 789, 172
+12, c_data point, 788, 196
+12, c_data point, 758, 197
+13, c_item label, 741, 605
+13, c_item label, 802, 605
+13, c_item label, 802, 577
+13, c_item label, 744, 577

@@ -1,0 +1,74 @@
+1, a_value annotation, 30, 22
+1, a_value annotation, 403, 21
+1, a_value annotation, 404, 50
+1, a_value annotation, 209, 51
+1, a_value annotation, 207, 78
+1, a_value annotation, 30, 78
+2, a_item label, 457, 503
+2, a_item label, 543, 503
+2, a_item label, 543, 523
+2, a_item label, 451, 523
+3, a_data point, 495, 223
+3, a_data point, 506, 223
+3, a_data point, 505, 239
+3, a_data point, 496, 240
+4, a_value, 941, 196
+4, a_value, 968, 196
+4, a_value, 968, 265
+4, a_value, 938, 264
+5, b_value annotation, 27, 57
+5, b_value annotation, 29, 78
+5, b_value annotation, 208, 78
+5, b_value annotation, 208, 57
+6, b_value legend, 32, 164
+6, b_value legend, 129, 165
+6, b_value legend, 129, 189
+6, b_value legend, 35, 190
+7, b_value, 943, 338
+7, b_value, 966, 337
+7, b_value, 966, 404
+7, b_value, 940, 404
+8, b_data point, 435, 352
+8, b_data point, 447, 349
+8, b_data point, 447, 361
+8, b_data point, 435, 363
+9, b_data point, 552, 362
+9, b_data point, 565, 364
+9, b_data point, 565, 376
+9, b_data point, 551, 376
+10, b_data point, 791, 349
+10, b_data point, 803, 348
+10, b_data point, 802, 362
+10, b_data point, 791, 361
+11, b_data point, 848, 325
+11, b_data point, 859, 326
+11, b_data point, 858, 341
+11, b_data point, 848, 341
+12, b_item label, 399, 501
+12, b_item label, 483, 504
+12, b_item label, 485, 525
+12, b_item label, 398, 527
+13, b_item label, 517, 526
+13, b_item label, 517, 502
+13, b_item label, 608, 502
+13, b_item label, 608, 525
+14, b_item label, 752, 500
+14, b_item label, 897, 501
+14, b_item label, 899, 522
+14, b_item label, 750, 520
+15, c_value annotation, 210, 59
+15, c_value annotation, 209, 81
+15, c_value annotation, 30, 80
+15, c_value annotation, 30, 56
+16, c_value legend, 129, 191
+16, c_value legend, 129, 165
+16, c_value legend, 32, 167
+16, c_value legend, 32, 191
+17, c_data point, 846, 339
+17, c_data point, 861, 339
+17, c_data point, 860, 326
+17, c_data point, 847, 324
+18, c_item label, 813, 499
+18, c_item label, 812, 523
+18, c_item label, 897, 523
+18, c_item label, 897, 499
