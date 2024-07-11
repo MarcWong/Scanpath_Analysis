@@ -92,6 +92,16 @@ def calc_ftot(df: pd.DataFrame, ques: str) -> float:
         return (df_str.find('3'))
     return -1
 
+def calc_task_ratio(df: pd.DataFrame, ques: str) -> float:
+    df_str = pd2string(df)
+    if ques == 'A':
+        return np.round(df_str.count('1') / len(df_str), 4)
+    if ques == 'B':
+        return np.round(df_str.count('2') / len(df_str), 4)
+    if ques == 'C':
+        return np.round(df_str.count('3') / len(df_str), 4)
+    return -1
+
 def scanpath_analysis(data_path: str, out_file_path: str):
     saliency_metrics_list = []
 
@@ -122,6 +132,7 @@ def scanpath_analysis(data_path: str, out_file_path: str):
                     'saccade_len_std': saccade_len_std,
                     'aoi_shift': calc_aoi_shift(df['id']),
                     'first_time_on_task': calc_ftot(df['task_id'], ques),
+                    'fixation_task_ratio': calc_task_ratio(df['task_id'], ques),
                     'title_ratio': np.round(df[df['id']==4].shape[0] / df.shape[0],4),
                     'legend_ratio': np.round(df[df['id']==5].shape[0] / df.shape[0], 4),
                     'axis_ratio': np.round(df[df['id']==6].shape[0] / df.shape[0], 4),
