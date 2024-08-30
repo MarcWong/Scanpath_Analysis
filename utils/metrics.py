@@ -641,6 +641,53 @@ def TDE(
 		return False
 
 
+def scaled_TDE(
+        H,
+        S,
+        image,
+
+        # options
+        toPlot=False):
+    # to preserve data, we work on copies of the lists
+    H_scanpath = np.copy(H)
+    S_scanpath = np.copy(S)
+
+    # First, coordinates are rescaled as to an image with maximum dimension 1
+    # This is because, clearly, smaller images would produce smaller distances
+    max_dim = float(max(np.shape(image)))
+
+    for P in H_scanpath:
+        P[0] /= max_dim
+        P[1] /= max_dim
+
+    for P in S_scanpath:
+        P[0] /= max_dim
+        P[1] /= max_dim
+
+    # Then, scanpath similarity is computer for all possible k
+    max_k = min(len(H_scanpath), len(S_scanpath))
+    similarities = []
+    for k in np.arange(1, max_k + 1):
+        s = TDE(
+            H_scanpath,
+            S_scanpath,
+            k=k,  # time-embedding vector dimension
+            distance_mode='Mean')
+        similarities.append(np.exp(-s))
+        #print(similarities[-1])
+
+    # Now that we have similarity measure for all possible k
+    # we compute and return the mean
+
+    if toPlot:
+        keys = np.arange(1, max_k + 1)
+        plt.plot(keys, similarities)
+        plt.show()
+
+    if len(similarities) == 0:
+        return 0
+    return sum(similarities) / len(similarities)
+
 
 
 def multi_match(matlab_engine, P, Q, height, width, check=False, **kwargs):
