@@ -51,7 +51,7 @@ def evaluate_UMSS(img_path: str, pred_path:str, gt_path: str):
     for idx in trange(0, len(list_img_targets)):
         imgfullpath = list_img_targets[idx]
         with Image.open(imgfullpath) as im:
-            # width, height = im.size # original image size
+            width, height = im.size # original image size
 
             imgname = imgfullpath.split('/')[-1]
             imgname = imgname.strip('.png')
@@ -81,10 +81,8 @@ def evaluate_UMSS(img_path: str, pred_path:str, gt_path: str):
                         df_predI = df_predI.drop(['user', 'index', 'time'] ,axis=1)
 
                         # Normalization required
-                        #df_predI['x'] /= 640
-                        #df_predI['y'] /= 480
-                        #df_predI['x'] *= width
-                        #df_predI['y'] *= height
+                        df_predI['x'] = df_predI['x'] * width / 640
+                        df_predI['y'] = df_predI['y'] * height / 480
 
                         id_dtw = DTW(df_predI, df_gt.to_numpy())
                         # id_stde = scaled_TDE(df_predI,df_gt.to_numpy(), im)

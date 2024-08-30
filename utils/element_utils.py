@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import os
 import json
-import BBox
+import utils.BBox as BBox
 from skimage.draw import polygon
 from pathlib import Path
 import numpy as np

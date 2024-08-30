@@ -6,13 +6,10 @@ from tqdm import trange
 from glob import glob
 import numpy as np
 import pandas as pd
-import shutil
-from natsort import natsorted
 
-sys.path.append("utils")
-from element_utils import get_id_map, get_BBoxes, get_BBoxes_task, plot_element_map
-from csv_process import csv_process
-from scanpath_utils import scanpath_metrics, pd2string, remove_duplicates
+from utils.element_utils import get_id_map, get_BBoxes, get_BBoxes_task, plot_element_map
+from utils.csv_process import csv_process
+from utils.scanpath_utils import pd2string, remove_duplicates
 
 
 def csv_bounding_boxes(data_path: str, out_file_path: str, PLOT_MAP: bool = True):
@@ -24,7 +21,7 @@ def csv_bounding_boxes(data_path: str, out_file_path: str, PLOT_MAP: bool = True
     STR = ['Z','a', 'b', 'c', 'T','L','A','M']
 
     imgpath = f'{data_path}/images/'
-    visualisations = natsorted(glob(imgpath+'*.png'))
+    visualisations = glob(imgpath+'*.png')
 
     for i in trange(len(visualisations)):
         visualisation = visualisations[i]
@@ -49,6 +46,7 @@ def csv_bounding_boxes(data_path: str, out_file_path: str, PLOT_MAP: bool = True
 
             participants = glob(os.path.join(question ,'*.tsv'))
             for participant in participants:
+                scanpath_str = ""
                 new_list = []
                 df = pd.read_csv(participant, index_col = False, header = 0, sep = '\t')
 
@@ -58,10 +56,13 @@ def csv_bounding_boxes(data_path: str, out_file_path: str, PLOT_MAP: bool = True
                         id_map[int(row["x"]), int(row["y"])], \
                         STR[id_map[int(row["x"]), int(row["y"])]], \
                         id_map_task[int(row["x"]), int(row["y"])]])
+                    scanpath_str += STR[id_map[int(row["x"]), int(row["y"])]]
 
                 df_new = pd.DataFrame(new_list, columns = ['x', 'y', 't', 'id', 'label', 'task_id'])
-
                 df_new.to_csv(participant, index = False, sep='\t')
+
+                with open(os.path.join(question, f'{participant.split("/")[-1].strip(".tsv")}.txt'),'w') as f:
+                    f.write(str(scanpath_str));
 
 
 def calc_aoi_shift(df: pd.DataFrame) -> float:
@@ -106,7 +107,7 @@ def scanpath_analysis(data_path: str, out_file_path: str):
     saliency_metrics_list = []
 
     imgpath = f'{data_path}/images/'
-    visualisations = natsorted(glob(imgpath+'*.png'))
+    visualisations = glob(imgpath+'*.png')
 
     for i in trange(len(visualisations)):
         visualisation = visualisations[i]
@@ -163,7 +164,7 @@ if __name__ == '__main__':
         print("generating bounding boxes...")
         csv_bounding_boxes(args['data_path'], args['out_file_path'])
 
-    print("calculating scanpath metrics...")
-    scanpath_metrics(args['data_path'], args['out_file_path'])
+    # print("calculating scanpath metrics...")
+    # scanpath_metrics(args['data_path'], args['out_file_path'])
     # print("analysing scanpaths...")
     # scanpath_analysis(args['data_path'], args['out_file_path'])
