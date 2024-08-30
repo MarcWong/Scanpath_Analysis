@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 from tqdm import trange
 
-def process_image(datapath: str):
+def process_image():
     """ return two Pandas Frame, imgName and taskType
     :param data_path: Where to read the data
     """
@@ -17,7 +17,7 @@ def csv_process(data_path: str, out_file_path: str):
     :param data_path: Where to read the data
     :param out_file_path: Where to write the files
     """
-    img_name, task_type = process_image(data_path)
+    img_name, task_type = process_image()
 
     for i in trange(1,31):
         scanpaths_path = glob(os.path.join(data_path, 'fixations' ,f'*_{i}.tsv'))
