@@ -150,8 +150,8 @@ def scanpath_analysis(data_path: str, out_file_path: str):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument("--data_path", type=str, default="/netpool/homes/wangyo/Dataset/Massvis/taskvis")
-    parser.add_argument("--out_file_path", type=str, default="/netpool/homes/wangyo/Dataset/Massvis/taskvis_analysis")
+    parser.add_argument("--data_path", type=str, default="./taskvis")
+    parser.add_argument("--out_file_path", type=str, default="./taskvis_analysis")
     parser.add_argument('--process_csv', action='store_true')
 
     args = vars(parser.parse_args())
@@ -163,7 +163,7 @@ if __name__ == '__main__':
         print("generating bounding boxes...")
         csv_bounding_boxes(args['data_path'], args['out_file_path'])
 
-    # print("calculating scanpath metrics...")
-    # scanpath_metrics(args['data_path'], args['out_file_path'])
-    print("analysing scanpaths...")
-    scanpath_analysis(args['data_path'], args['out_file_path'])
+    print("calculating scanpath metrics...")
+    scanpath_metrics(args['data_path'], args['out_file_path'])
+    # print("analysing scanpaths...")
+    # scanpath_analysis(args['data_path'], args['out_file_path'])

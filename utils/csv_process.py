@@ -9,8 +9,8 @@ def process_image(datapath: str):
     """ return two Pandas Frame, imgName and taskType
     :param data_path: Where to read the data
     """
-    return pd.read_csv(os.path.join(datapath,'images.txt'), header=0, sep="\t"), \
-        pd.read_csv(os.path.join(datapath,'tasktypes.txt'), index_col=0, header=0, sep="\t")
+    return pd.read_csv('./taskvis/images.txt', header=0, sep="\t"), \
+        pd.read_csv('./taskvis/tasktypes.txt', index_col=0, header=0, sep="\t")
 
 def csv_process(data_path: str, out_file_path: str):
     """ Reads csv files and saves them separately in folders:

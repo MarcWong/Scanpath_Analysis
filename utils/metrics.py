@@ -1,14 +1,12 @@
 
 import sys
 import os
-
 import re
 import numpy as np
 import cv2
 from scipy.stats import entropy
 from scipy.spatial.distance import directed_hausdorff, euclidean
-from scipy.stats import pearsonr
-import scipy.io as sio
+# from scipy.stats import pearsonr
 #import torch.nn.functional as F
 
 
@@ -16,7 +14,7 @@ from fastdtw import fastdtw
 import editdistance
 import requests, zipfile, io
 
-from utils import scanpath_to_string, global_align
+from .utils import scanpath_to_string, global_align
 
 try:
 	import matlab
