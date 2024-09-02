@@ -26,36 +26,32 @@ def get_gt_files(imgname: str, gt_path: str) -> list:
             print('Error: Task Type not found')
     return [gt_a, gt_b, gt_c]
 
-
-def get_gt_strings(gtpath:str,imname:str, is_simplified: False) -> list:
-    STR_a=[]
-    STR_b=[]
-    STR_c=[]
-    gtstrings_a = glob(os.path.join(gtpath,imname,'A','*.txt'))
-    gtstrings_b = glob(os.path.join(gtpath,imname,'B','*.txt'))
-    gtstrings_c = glob(os.path.join(gtpath,imname,'C','*.txt'))
-    for gtstr in gtstrings_a:
-        f = open(gtstr,'r')
-        line = f.readline()
-        f.close()
-        if is_simplified:
-            line = remove_duplicates(line)
-        STR_a.append(line)
-    for gtstr in gtstrings_b:
-        f = open(gtstr,'r')
-        line = f.readline()
-        f.close()
-        if is_simplified:
-            line = remove_duplicates(line)
-        STR_b.append(line)
-    for gtstr in gtstrings_c:
-        f = open(gtstr,'r')
-        line = f.readline()
-        f.close()
-        if is_simplified:
-            line = remove_duplicates(line)
-        STR_c.append(line)
-    return [STR_a, STR_b, STR_c]
+def get_gt_strings(gtpath:str, imname:str, is_simplified: False) -> list:
+	STR_a=[]
+	STR_b=[]
+	STR_c=[]
+	gtstrings_a = glob(os.path.join(gtpath,imname,'A','*.txt'))
+	gtstrings_b = glob(os.path.join(gtpath,imname,'B','*.txt'))
+	gtstrings_c = glob(os.path.join(gtpath,imname,'C','*.txt'))
+	for gtstr in gtstrings_a:
+		with open(gtstr,'r',encoding='utf-8') as f:
+			line = f.readline()
+		if is_simplified:
+			line = remove_duplicates(line)
+		STR_a.append(line)
+	for gtstr in gtstrings_b:
+		with open(gtstr,'r',encoding='utf-8') as f:
+			line = f.readline()
+		if is_simplified:
+			line = remove_duplicates(line)
+		STR_b.append(line)
+	for gtstr in gtstrings_c:
+		with open(gtstr,'r',encoding='utf-8') as f:
+			line = f.readline()
+		if is_simplified:
+			line = remove_duplicates(line)
+		STR_c.append(line)
+	return [STR_a, STR_b, STR_c]
 
 def scanpath_to_string(scanpath, height, width, Xbins, Ybins, Tbins):
 	"""

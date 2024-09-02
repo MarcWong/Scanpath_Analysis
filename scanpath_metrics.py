@@ -48,7 +48,6 @@ def calc_metrics(gt_files:list, imgname:str, im:Image, pred_path:str):
     if not gt_files: return
     for t, gt_files_type in enumerate(gt_files):
         DTWs_type = []
-
         for gg in range(len(gt_files_type)):
             df_gt = pd.read_csv(gt_files_type[gg], sep='\t').dropna()
             if df_gt.empty: continue
@@ -74,39 +73,42 @@ def calc_metrics(gt_files:list, imgname:str, im:Image, pred_path:str):
         elif t == 2:
             DTWs_C.extend(DTWs_type)
 
-def evaluate_DTW(data_path:str, img_path: str, pred_path:str):
+def evaluate_dtw(data_path:str, img_path: str, pred_path:str):
+    """
+    @purpose: evaluate the DTW between GT and predicted scanpaths
+    @output : the DTW Metrics of A, B, C types
+    """
     gt_path = os.path.join(data_path, 'fixations')
     visualisations = glob(os.path.join(img_path,'*.png'))
     for idx in trange(len(visualisations)):
-        imgfullpath = visualisations[idx]
-        with Image.open(imgfullpath) as im:
-            imgname = imgfullpath.split('/')[-1]
-            imgname = imgname.strip('.png')
-            gt_files = get_gt_files(f'{imgname}.png', gt_path)
-            calc_metrics(gt_files, imgname, im, pred_path)
+        with Image.open(visualisations[idx]) as im:
+            imname = visualisations[idx].split('/')[-1].strip('.png')
+            gt_files = get_gt_files(f'{imname}.png', gt_path)
+            calc_metrics(gt_files, imname, im, pred_path)
     return DTWs_A, DTWs_B, DTWs_C
 
-def evaluate_SS(imgpath: str, predpath: str, gtpath: str, is_simplified=False):
+def evaluate_ss(img_path: str, pred_path: str, gt_path: str, is_simplified=False):
+    """
+    @purpose: evaluate the Sequence Score between GT and predicted scanpaths
+    @output : the SS Metrics of A, B, and C types
+    """
     SS_A = []
     SS_B = []
     SS_C = []
-    strpath = os.path.join(predpath, 'str')
-    visualisations = glob(imgpath+'/*.png')
+    strpath = os.path.join(pred_path, 'str')
+    visualisations = glob(img_path+'/*.png')
     for idx in trange(len(visualisations)):
-        imgfullpath = visualisations[idx]
-        imgname = imgfullpath.split('/')[-1]
-        imname = imgname.strip('.png')
-        gt_strs = get_gt_strings(gtpath, imname, is_simplified)
+        imname = visualisations[idx].split('/')[-1].strip('.png')
+        gt_strs = get_gt_strings(gt_path, imname, is_simplified)
         for t, gt_strs_type in enumerate(gt_strs):
             SS_type = []
-            for gg in range(len(gt_strs_type)):
-                strings = gt_strs_type[gg]
+            for _, string_gt in enumerate(gt_strs_type):
                 for pp in range(1, len(gt_strs_type) + 1):
                     strfile = f'{strpath}/{pp}/{imname}.txt'
-                    f = open(strfile,'r')
-                    line = f.readline()
-                    res = nw_matching(strings, line)
-                    SS_type.append(res)
+                    with open(strfile,'r', encoding='utf-8') as f:
+                        line = f.readline()
+                        res = nw_matching(string_gt, line)
+                        SS_type.append(res)
             if t == 0:
                 SS_A.extend(SS_type)
             elif t == 1:
@@ -115,6 +117,60 @@ def evaluate_SS(imgpath: str, predpath: str, gtpath: str, is_simplified=False):
                 SS_C.extend(SS_type)
     return SS_A, SS_B, SS_C
 
+def evaluate_gt(data_path: str, img_path: str, gt_path: str):
+    """
+    @purpose: evaluate the eigen similarity between the GT scanpaths
+    @output : the DTW and SS Metrics of GT scanpaths
+    """
+    SS_A = []
+    SS_B = []
+    SS_C = []
+    DTWs_A = []
+    DTWs_B = []
+    DTWs_C = []
+    visualisations = glob(os.path.join(img_path,'*.png'))
+    for idx in trange(len(visualisations)):
+        imname = visualisations[idx].split('/')[-1].strip('.png')
+        gt_strs = get_gt_strings(gt_path, imname, False)
+        gt_files = get_gt_files(f'{imname}.png', os.path.join(data_path, 'fixations'))
+        for t, gt_files_type in enumerate(gt_files):
+            DTWs_type = []
+            for gg in range(len(gt_files_type)):
+                df_gt = pd.read_csv(gt_files_type[gg], sep='\t').dropna()
+                if df_gt.empty: continue
+                df_gt.columns = ['time', 'index', 'x', 'y']
+                df_gt = df_gt.drop(['index','time'],axis=1).to_numpy()
+
+                for pp in range(len(gt_files_type)):
+                    if pp == gg: continue
+                    df_gt_2 = pd.read_csv(gt_files_type[pp], sep='\t').dropna()
+                    if df_gt_2.empty: continue
+                    df_gt_2.columns = ['time', 'index', 'x', 'y']
+                    df_gt_2 = df_gt_2.drop(['index','time'],axis=1).to_numpy()
+
+                    id_dtw = DTW(df_gt_2, df_gt)
+                    DTWs_type.append(id_dtw)
+            if t == 0:
+                DTWs_A.extend(DTWs_type)
+            elif t == 1:
+                DTWs_B.extend(DTWs_type)
+            elif t == 2:
+                DTWs_C.extend(DTWs_type)
+
+        for t, gt_strs_type in enumerate(gt_strs):
+            SS_type = []
+            for gg, string_g in enumerate(gt_strs_type):
+                for pp, string_p in enumerate(gt_strs_type):
+                    if pp == gg: continue
+                    res = nw_matching(string_g, string_p)
+                    SS_type.append(res)
+            if t == 0:
+                SS_A.extend(SS_type)
+            elif t == 1:
+                SS_B.extend(SS_type)
+            elif t == 2:
+                SS_C.extend(SS_type)
+    return DTWs_A, DTWs_B, DTWs_C, SS_A, SS_B, SS_C
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -126,10 +182,13 @@ if __name__ == '__main__':
     imgpath = os.path.join('evaluation', 'images')
     predpath = os.path.join('evaluation', 'scanpaths', args['pred_name'])
     gtpath = os.path.join('taskvis_analysis', 'fixationsByVis')
-    print('evaluating Dynamic Time Warpping')
-    DTWs_a, DTWs_b, DTWs_c = evaluate_DTW(args['data_path'],imgpath, predpath)
-    print('evaluating Sequence Score')
-    SS_A, SS_B, SS_C = evaluate_SS(imgpath, predpath, gtpath, is_simplified=args['is_simplified_ss'])
+    if args['pred_name'] == 'GT':
+        DTWs_a, DTWs_b, DTWs_c, SS_A, SS_B, SS_C = evaluate_gt(args['data_path'], imgpath, gtpath)
+    else:
+        print('evaluating Dynamic Time Warpping')
+        DTWs_a, DTWs_b, DTWs_c = evaluate_dtw(args['data_path'],imgpath, predpath)
+        print('evaluating Sequence Score')
+        SS_A, SS_B, SS_C = evaluate_ss(imgpath, predpath, gtpath, is_simplified=args['is_simplified_ss'])
 
     print(np.round(np.mean(SS_A),3), np.round(np.mean(SS_B),3), np.round(np.mean(SS_C),3))
     print(predpath, np.round(np.mean(DTWs_a), 3), np.round(np.std(DTWs_a), 3))
