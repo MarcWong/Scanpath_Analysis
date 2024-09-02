@@ -2,6 +2,7 @@ import numpy as np
 import os
 from glob import glob
 from utils.csv_process import process_image
+from utils.scanpath_utils import remove_duplicates
 
 def get_gt_files(imgname: str, gt_path: str) -> list:
     img_name, task_type = process_image()
@@ -26,7 +27,7 @@ def get_gt_files(imgname: str, gt_path: str) -> list:
     return [gt_a, gt_b, gt_c]
 
 
-def get_gt_strings(gtpath:str,imname:str) -> list:
+def get_gt_strings(gtpath:str,imname:str, is_simplified: False) -> list:
     STR_a=[]
     STR_b=[]
     STR_c=[]
@@ -37,16 +38,22 @@ def get_gt_strings(gtpath:str,imname:str) -> list:
         f = open(gtstr,'r')
         line = f.readline()
         f.close()
+        if is_simplified:
+            line = remove_duplicates(line)
         STR_a.append(line)
     for gtstr in gtstrings_b:
         f = open(gtstr,'r')
         line = f.readline()
         f.close()
+        if is_simplified:
+            line = remove_duplicates(line)
         STR_b.append(line)
     for gtstr in gtstrings_c:
         f = open(gtstr,'r')
         line = f.readline()
         f.close()
+        if is_simplified:
+            line = remove_duplicates(line)
         STR_c.append(line)
     return [STR_a, STR_b, STR_c]
 

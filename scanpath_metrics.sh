@@ -1,0 +1,1 @@
+python scanpath_metrics.py --pred_name deepgaze

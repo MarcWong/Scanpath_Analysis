@@ -150,7 +150,6 @@ def scanpath_analysis(data_path: str, out_file_path: str):
 # process_str for baseline methods, such as UMSS, deepgaze, etc.
 def process_str(data_path: str, img_path: str, pred_path: str):
     visualisations = glob(img_path+'/*.png')
-    print(pred_path)
 
     for idx in trange(len(visualisations)):
         visualisation = visualisations[idx]
@@ -160,46 +159,56 @@ def process_str(data_path: str, img_path: str, pred_path: str):
         with Image.open(os.path.join(data_path, "images", f"{imname}.png")) as img:
             w, h = img.size
             id_map = get_id_map(bboxes, w, h)
-            predCsv = os.path.join(pred_path, f'{imname}.csv') # all of the predictions are in this file
-            if not os.path.exists(predCsv): continue
-            df_pred = pd.read_csv(predCsv)
-            df_pred.columns = ['user', 'index', 'time', 'x', 'y']
 
-            for pp in range(1, 47):
-                df_predI = df_pred[df_pred['user'] == pp]
-                scanpath_str = ""
-
-                # then write the id to the csv
-                for _, row in df_predI.iterrows():
-                    scanpath_str += STR[id_map[int(row["x"]), int(row["y"])]]
-
-                Path(os.path.join(pred_path, 'str', str(pp))).mkdir(parents=True, exist_ok=True)
-                with open(os.path.join(pred_path, 'str', str(pp), imname+'.txt'), 'w') as f:
-                    f.write(str(scanpath_str));
+            # UMSS
+            if 'UMSS' in pred_path:
+                predCsv = os.path.join(pred_path, f'{imname}.csv') # all predictions
+                if not os.path.exists(predCsv): continue
+                df_pred = pd.read_csv(predCsv)
+                df_pred.columns = ['user', 'index', 'time', 'x', 'y']
+                for pp in range(1, 47):
+                    df_predI = df_pred[df_pred['user'] == pp]
+                    scanpath_str = ""
+                    # then write the id to the csv
+                    for _, row in df_predI.iterrows():
+                        scanpath_str += STR[id_map[int(float(row["x"])* w / 640), int(float(row["y"]) * h / 480)]]
+                    Path(os.path.join(pred_path, 'str', str(pp))).mkdir(parents=True, exist_ok=True)
+                    with open(os.path.join(pred_path, 'str', str(pp), imname+'.txt'), 'w') as f:
+                        f.write(str(scanpath_str))
+            elif 'deepgaze' in pred_path:
+                predNpy = np.load(os.path.join(pred_path, f'{imname}.npy')) # all predictions
+                predNpy[:,:,0] = predNpy[:,:,0] * w / 8192
+                predNpy[:,:,1] = predNpy[:,:,1] * h / 4096
+                for pp in range(np.shape(predNpy)[0]):
+                    scanpath_str = ""
+                    for fix in range(np.shape(predNpy)[1]):
+                        scanpath_str += STR[id_map[int(predNpy[pp][fix][0]), int(predNpy[pp][fix][1])]]
+                    Path(os.path.join(pred_path, 'str', str(pp))).mkdir(parents=True, exist_ok=True)
+                    with open(os.path.join(pred_path, 'str', str(pp), imname+'.txt'), 'w') as f:
+                        f.write(str(scanpath_str))
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("--data_path", type=str, default="./taskvis")
     parser.add_argument("--out_file_path", type=str, default="./taskvis_analysis")
-    parser.add_argument('--process_csv', action='store_true')
+    parser.add_argument('--process_gt', action='store_true')
     parser.add_argument('--process_baseline', action='store_true')
 
     args = vars(parser.parse_args())
     Path(args['out_file_path']).mkdir(parents=True, exist_ok=True)
 
-    if args['process_csv']:
+    if args['process_gt']:
         print("processing data...")
         csv_process(args['data_path'], args['out_file_path'])
         print("generating bounding boxes...")
         csv_bounding_boxes(args['data_path'], args['out_file_path'])
+        print("analysing scanpaths...")
+        scanpath_analysis(args['data_path'], args['out_file_path'])
 
     if args['process_baseline']:
         print("processing baseline methods...")
         imgpath = os.path.join('evaluation', 'images')
         predpath = os.path.join('evaluation', 'scanpaths', 'UMSS')
         process_str(args['data_path'],imgpath, predpath)
-
-    # print("calculating scanpath metrics...")
-    # scanpath_metrics(args['data_path'], args['out_file_path'])
-    # print("analysing scanpaths...")
-    # scanpath_analysis(args['data_path'], args['out_file_path'])
+        predpath = os.path.join('evaluation', 'scanpaths', 'deepgaze')
+        process_str(args['data_path'],imgpath, predpath)
