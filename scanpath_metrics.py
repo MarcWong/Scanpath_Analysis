@@ -23,9 +23,8 @@ DTWs_A = []
 DTWs_B = []
 DTWs_C = []
     
-def calc_metrics(gt_files, imgname, im, pred_path):
+def calc_metrics(gt_files:list, imgname:str, im:Image, pred_path:str):
     width, height = im.size # original image size
-
     if 'UMSS' in pred_path:
         predCsv = os.path.join(pred_path, f'{imgname}.csv') # all of the predictions are in this file
         if not os.path.exists(predCsv): return
@@ -76,7 +75,6 @@ def calc_metrics(gt_files, imgname, im, pred_path):
             DTWs_C.extend(DTWs_type)
 
 def evaluate_DTW(data_path:str, img_path: str, pred_path:str):
-    strpath = os.path.join(pred_path, 'str')
     gt_path = os.path.join(data_path, 'fixations')
     visualisations = glob(os.path.join(img_path,'*.png'))
     for idx in trange(len(visualisations)):
@@ -133,7 +131,7 @@ if __name__ == '__main__':
     print('evaluating Sequence Score')
     SS_A, SS_B, SS_C = evaluate_SS(imgpath, predpath, gtpath, is_simplified=args['is_simplified_ss'])
 
-    print(np.mean(np.array(SS_A)), np.mean(np.array(SS_B)), np.mean(np.array(SS_C)))
+    print(np.round(np.mean(SS_A),3), np.round(np.mean(SS_B),3), np.round(np.mean(SS_C),3))
     print(predpath, np.round(np.mean(DTWs_a), 3), np.round(np.std(DTWs_a), 3))
     print(predpath, np.round(np.mean(DTWs_b), 3), np.round(np.std(DTWs_b), 3))
     print(predpath, np.round(np.mean(DTWs_c), 3), np.round(np.std(DTWs_c), 3))
