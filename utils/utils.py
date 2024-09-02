@@ -1,4 +1,54 @@
 import numpy as np
+import os
+from glob import glob
+from utils.csv_process import process_image
+
+def get_gt_files(imgname: str, gt_path: str) -> list:
+    img_name, task_type = process_image()
+    # print(img_name, task_type)
+    if imgname not in img_name['filename'].to_list(): return None
+    img_id = img_name[img_name['filename'] == imgname]['imageID'].to_numpy()[0]
+    gt_files_noclass = glob(os.path.join(gt_path, f'*fix_{img_id}.tsv'))
+    gt_a = []
+    gt_b = []
+    gt_c = []
+    for gt_file in gt_files_noclass:
+        p_name = gt_file.split('/')[-1].split('_')[-3].replace('p','P')
+        taskT = task_type.at[p_name,str(img_id)]
+        if taskT == 'A':
+            gt_a.append(gt_file)
+        elif taskT == 'B':
+            gt_b.append(gt_file)
+        elif taskT == 'C':
+            gt_c.append(gt_file)
+        else:
+            print('Error: Task Type not found')
+    return [gt_a, gt_b, gt_c]
+
+
+def get_gt_strings(gtpath:str,imname:str) -> list:
+    STR_a=[]
+    STR_b=[]
+    STR_c=[]
+    gtstrings_a = glob(os.path.join(gtpath,imname,'A','*.txt'))
+    gtstrings_b = glob(os.path.join(gtpath,imname,'B','*.txt'))
+    gtstrings_c = glob(os.path.join(gtpath,imname,'C','*.txt'))
+    for gtstr in gtstrings_a:
+        f = open(gtstr,'r')
+        line = f.readline()
+        f.close()
+        STR_a.append(line)
+    for gtstr in gtstrings_b:
+        f = open(gtstr,'r')
+        line = f.readline()
+        f.close()
+        STR_b.append(line)
+    for gtstr in gtstrings_c:
+        f = open(gtstr,'r')
+        line = f.readline()
+        f.close()
+        STR_c.append(line)
+    return [STR_a, STR_b, STR_c]
 
 def scanpath_to_string(scanpath, height, width, Xbins, Ybins, Tbins):
 	"""

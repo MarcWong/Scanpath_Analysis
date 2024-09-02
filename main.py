@@ -11,14 +11,13 @@ from utils.element_utils import get_id_map, get_BBoxes, get_BBoxes_task, plot_el
 from utils.csv_process import csv_process
 from utils.scanpath_utils import pd2string, remove_duplicates
 
+STR = ['Z','a', 'b', 'c', 'T','L','A','M']
 
 def csv_bounding_boxes(data_path: str, out_file_path: str, PLOT_MAP: bool = True):
     """Reads csv files and bounding boxes from disk and write which bounding boxes every fixation belong to.
-    
     :param out_file_path: Where to write the files.
     :param PLOT_MAP: export the plotted maps to disk
     """
-    STR = ['Z','a', 'b', 'c', 'T','L','A','M']
 
     imgpath = f'{data_path}/images/'
     visualisations = glob(imgpath+'*.png')
@@ -148,12 +147,42 @@ def scanpath_analysis(data_path: str, out_file_path: str):
     df = pd.DataFrame.from_dict(saliency_metrics_list)
     df.to_csv('./scanpath_analysis.tsv', index = False, sep='\t')
 
+# process_str for baseline methods, such as UMSS, deepgaze, etc.
+def process_str(data_path: str, img_path: str, pred_path: str):
+    visualisations = glob(img_path+'/*.png')
+    print(pred_path)
+
+    for idx in trange(len(visualisations)):
+        visualisation = visualisations[idx]
+        imgname = os.path.basename(visualisation)
+        imname, _ = os.path.splitext(imgname)
+        bboxes = get_BBoxes(imname, data_path)
+        with Image.open(os.path.join(data_path, "images", f"{imname}.png")) as img:
+            w, h = img.size
+            id_map = get_id_map(bboxes, w, h)
+            predCsv = os.path.join(pred_path, f'{imname}.csv') # all of the predictions are in this file
+            if not os.path.exists(predCsv): continue
+            df_pred = pd.read_csv(predCsv)
+            df_pred.columns = ['user', 'index', 'time', 'x', 'y']
+
+            for pp in range(1, 47):
+                df_predI = df_pred[df_pred['user'] == pp]
+                scanpath_str = ""
+
+                # then write the id to the csv
+                for _, row in df_predI.iterrows():
+                    scanpath_str += STR[id_map[int(row["x"]), int(row["y"])]]
+
+                Path(os.path.join(pred_path, 'str', str(pp))).mkdir(parents=True, exist_ok=True)
+                with open(os.path.join(pred_path, 'str', str(pp), imname+'.txt'), 'w') as f:
+                    f.write(str(scanpath_str));
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("--data_path", type=str, default="./taskvis")
     parser.add_argument("--out_file_path", type=str, default="./taskvis_analysis")
     parser.add_argument('--process_csv', action='store_true')
+    parser.add_argument('--process_baseline', action='store_true')
 
     args = vars(parser.parse_args())
     Path(args['out_file_path']).mkdir(parents=True, exist_ok=True)
@@ -163,6 +192,12 @@ if __name__ == '__main__':
         csv_process(args['data_path'], args['out_file_path'])
         print("generating bounding boxes...")
         csv_bounding_boxes(args['data_path'], args['out_file_path'])
+
+    if args['process_baseline']:
+        print("processing baseline methods...")
+        imgpath = os.path.join('evaluation', 'images')
+        predpath = os.path.join('evaluation', 'scanpaths', 'UMSS')
+        process_str(args['data_path'],imgpath, predpath)
 
     # print("calculating scanpath metrics...")
     # scanpath_metrics(args['data_path'], args['out_file_path'])
