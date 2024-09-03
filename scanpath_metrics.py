@@ -3,8 +3,8 @@
 Created on 20240830
 
 @author: Yao Wang
-@purpose: to compute the scanpath metrics of UMSS predictions to the GT scanpaths in Taskvis dataset
-@output : the final avg. Metrics
+@purpose: to compute the scanpath metrics of predicted scanpaths to the GT scanpaths in the TaskVis dataset
+@output : the final scanpath Metrics, LEV↓, DTW↓, SS↑
 """
 
 import os
