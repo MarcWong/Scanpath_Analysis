@@ -16,14 +16,17 @@ pd.options.mode.chained_assignment = None
 from PIL import Image
 from tqdm import trange
 from pathlib import Path
-from utils.metrics import DTW, nw_matching
+from utils.metrics import DTW, nw_matching, levenshtein_distance
 from utils.utils import get_gt_strings, get_gt_files
 
 DTWs_A = []
 DTWs_B = []
 DTWs_C = []
+LEVs_A = []
+LEVs_B = []
+LEVs_C = []
     
-def calc_metrics(gt_files:list, imgname:str, im:Image, pred_path:str):
+def calc_metrics(gt_files:list, imgname:str, im:Image, pred_path:str, is_best:bool=False):
     width, height = im.size # original image size
     if 'UMSS' in pred_path:
         predCsv = os.path.join(pred_path, f'{imgname}.csv') # all of the predictions are in this file
@@ -48,7 +51,10 @@ def calc_metrics(gt_files:list, imgname:str, im:Image, pred_path:str):
     if not gt_files: return
     for t, gt_files_type in enumerate(gt_files):
         DTWs_type = []
+        LEVs_type = []
         for gg in range(len(gt_files_type)):
+            id_dtw_best = 1000000
+            id_lev_best = 1000000
             df_gt = pd.read_csv(gt_files_type[gg], sep='\t').dropna()
             if df_gt.empty: continue
             df_gt.columns = ['time', 'index', 'x', 'y']
@@ -61,19 +67,33 @@ def calc_metrics(gt_files:list, imgname:str, im:Image, pred_path:str):
                 if 'UMSS' in pred_path or 'ours' in pred_path:
                     df_predI = df_pred[df_pred['user'] == pp]
                     ########## 2D Metrics
-                    df_predI = df_predI.drop(['user', 'index', 'time'] ,axis=1)
+                    df_predI = df_predI.drop(['user', 'index', 'time'] ,axis=1).to_numpy()
                 elif 'deepgaze' in pred_path:
                     df_predI = predNpy[pp-1]
                 id_dtw = DTW(df_predI, df_gt)
-                DTWs_type.append(id_dtw)
+                id_lev = levenshtein_distance(df_predI, df_gt, width = width, height = height)
+                if not is_best:
+                    DTWs_type.append(id_dtw)
+                    LEVs_type.append(id_lev)
+                else:
+                    if id_dtw < id_dtw_best:
+                        id_dtw_best = id_dtw
+                    if id_lev < id_lev_best:
+                        id_lev_best = id_lev
+            if is_best:
+                DTWs_type.append(id_dtw_best)
+                LEVs_type.append(id_lev_best)
         if t == 0:
             DTWs_A.extend(DTWs_type)
+            LEVs_A.extend(LEVs_type)
         elif t == 1:
             DTWs_B.extend(DTWs_type)
+            LEVs_B.extend(LEVs_type)
         elif t == 2:
             DTWs_C.extend(DTWs_type)
+            LEVs_C.extend(LEVs_type)
 
-def evaluate_dtw(data_path:str, img_path: str, pred_path:str):
+def evaluate_dtw_lev(data_path:str, img_path: str, pred_path:str, is_best:bool):
     """
     @purpose: evaluate the DTW between GT and predicted scanpaths
     @output : the DTW Metrics of A, B, C types
@@ -84,10 +104,10 @@ def evaluate_dtw(data_path:str, img_path: str, pred_path:str):
         with Image.open(visualisations[idx]) as im:
             imname = visualisations[idx].split('/')[-1].strip('.png')
             gt_files = get_gt_files(f'{imname}.png', gt_path)
-            calc_metrics(gt_files, imname, im, pred_path)
-    return DTWs_A, DTWs_B, DTWs_C
+            calc_metrics(gt_files, imname, im, pred_path, is_best)
+    return DTWs_A, DTWs_B, DTWs_C, LEVs_A, LEVs_B, LEVs_C
 
-def evaluate_ss(img_path: str, pred_path: str, gt_path: str, is_simplified=False):
+def evaluate_ss(img_path: str, pred_path: str, gt_path: str, is_simplified:bool=False, is_best:bool=False):
     """
     @purpose: evaluate the Sequence Score between GT and predicted scanpaths
     @output : the SS Metrics of A, B, and C types
@@ -103,12 +123,18 @@ def evaluate_ss(img_path: str, pred_path: str, gt_path: str, is_simplified=False
         for t, gt_strs_type in enumerate(gt_strs):
             SS_type = []
             for _, string_gt in enumerate(gt_strs_type):
+                id_ss_best = 0
                 for pp in range(1, len(gt_strs_type) + 1):
                     strfile = f'{strpath}/{pp}/{imname}.txt'
                     with open(strfile,'r', encoding='utf-8') as f:
                         line = f.readline()
-                        res = nw_matching(string_gt, line)
-                        SS_type.append(res)
+                        id_ss = nw_matching(string_gt, line)
+                        if not is_best:
+                            SS_type.append(id_ss)
+                        elif id_ss > id_ss_best:
+                            id_ss_best = id_ss
+                if is_best:
+                    SS_type.append(id_ss_best)
             if t == 0:
                 SS_A.extend(SS_type)
             elif t == 1:
@@ -117,7 +143,7 @@ def evaluate_ss(img_path: str, pred_path: str, gt_path: str, is_simplified=False
                 SS_C.extend(SS_type)
     return SS_A, SS_B, SS_C
 
-def evaluate_gt(data_path: str, img_path: str, gt_path: str):
+def evaluate_gt(data_path: str, img_path: str, gt_path: str, is_best:bool=False):
     """
     @purpose: evaluate the eigen similarity between the GT scanpaths
     @output : the DTW and SS Metrics of GT scanpaths
@@ -128,14 +154,22 @@ def evaluate_gt(data_path: str, img_path: str, gt_path: str):
     DTWs_A = []
     DTWs_B = []
     DTWs_C = []
+    LEVs_A = []
+    LEVs_B = []
+    LEVs_C = []
     visualisations = glob(os.path.join(img_path,'*.png'))
     for idx in trange(len(visualisations)):
         imname = visualisations[idx].split('/')[-1].strip('.png')
+        with Image.open(visualisations[idx]) as im:
+            width, height = im.size
         gt_strs = get_gt_strings(gt_path, imname, False)
         gt_files = get_gt_files(f'{imname}.png', os.path.join(data_path, 'fixations'))
         for t, gt_files_type in enumerate(gt_files):
             DTWs_type = []
+            LEVs_type = []
             for gg in range(len(gt_files_type)):
+                id_dtw_best = 1000000
+                id_lev_best = 1000000
                 df_gt = pd.read_csv(gt_files_type[gg], sep='\t').dropna()
                 if df_gt.empty: continue
                 df_gt.columns = ['time', 'index', 'x', 'y']
@@ -147,54 +181,77 @@ def evaluate_gt(data_path: str, img_path: str, gt_path: str):
                     if df_gt_2.empty: continue
                     df_gt_2.columns = ['time', 'index', 'x', 'y']
                     df_gt_2 = df_gt_2.drop(['index','time'],axis=1).to_numpy()
-
                     id_dtw = DTW(df_gt_2, df_gt)
-                    DTWs_type.append(id_dtw)
+                    id_lev = levenshtein_distance(df_gt_2, df_gt, width = width, height = height)
+                    if not is_best:
+                        DTWs_type.append(id_dtw)
+                        LEVs_type.append(id_lev)
+                    else:
+                        if id_dtw < id_dtw_best:
+                            id_dtw_best = id_dtw
+                        if id_lev < id_lev_best:
+                            id_lev_best = id_lev
+                if is_best:
+                    DTWs_type.append(id_dtw_best)
+                    LEVs_type.append(id_lev_best)
+
             if t == 0:
                 DTWs_A.extend(DTWs_type)
+                LEVs_A.extend(LEVs_type)
             elif t == 1:
                 DTWs_B.extend(DTWs_type)
+                LEVs_B.extend(LEVs_type)
             elif t == 2:
                 DTWs_C.extend(DTWs_type)
+                LEVs_C.extend(LEVs_type)
 
         for t, gt_strs_type in enumerate(gt_strs):
             SS_type = []
             for gg, string_g in enumerate(gt_strs_type):
+                id_ss_best = 0
                 for pp, string_p in enumerate(gt_strs_type):
                     if pp == gg: continue
-                    res = nw_matching(string_g, string_p)
-                    SS_type.append(res)
+                    id_ss = nw_matching(string_g, string_p)
+                    if not is_best:
+                        SS_type.append(id_ss)
+                    elif id_ss > id_ss_best:
+                        id_ss_best = id_ss
+                if is_best:
+                    SS_type.append(id_ss_best)
             if t == 0:
                 SS_A.extend(SS_type)
             elif t == 1:
                 SS_B.extend(SS_type)
             elif t == 2:
                 SS_C.extend(SS_type)
-    return DTWs_A, DTWs_B, DTWs_C, SS_A, SS_B, SS_C
+    return DTWs_A, DTWs_B, DTWs_C, LEVs_A, LEVs_B, LEVs_C, SS_A, SS_B, SS_C
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("--data_path", type=str, default="./taskvis")
     parser.add_argument('--pred_name', type=str, default='UMSS')
     parser.add_argument('--is_simplified_ss', action='store_true')
+    parser.add_argument('--best', action='store_true')
     args = vars(parser.parse_args())
 
     imgpath = os.path.join('evaluation', 'images')
     predpath = os.path.join('evaluation', 'scanpaths', args['pred_name'])
     gtpath = os.path.join('taskvis_analysis', 'fixationsByVis')
     if args['pred_name'] == 'GT':
-        DTWs_a, DTWs_b, DTWs_c, SS_A, SS_B, SS_C = evaluate_gt(args['data_path'], imgpath, gtpath)
+        DTWs_a, DTWs_b, DTWs_c, LEVs_a, LEVs_b, LEVs_c, SS_A, SS_B, SS_C = evaluate_gt(args['data_path'], imgpath, gtpath, is_best=args['best'])
     else:
         print('evaluating Dynamic Time Warpping')
-        DTWs_a, DTWs_b, DTWs_c = evaluate_dtw(args['data_path'],imgpath, predpath)
+        DTWs_a, DTWs_b, DTWs_c, LEVs_a, LEVs_b, LEVs_c = evaluate_dtw_lev(args['data_path'],imgpath, predpath, is_best=args['best'])
         print('evaluating Sequence Score')
-        SS_A, SS_B, SS_C = evaluate_ss(imgpath, predpath, gtpath, is_simplified=args['is_simplified_ss'])
+        SS_A, SS_B, SS_C = evaluate_ss(imgpath, predpath, gtpath, is_simplified=args['is_simplified_ss'], is_best=args['best'])
 
-    print(np.round(np.mean(SS_A),3), np.round(np.mean(SS_B),3), np.round(np.mean(SS_C),3))
-    print(predpath, np.round(np.mean(DTWs_a), 3), np.round(np.std(DTWs_a), 3))
-    print(predpath, np.round(np.mean(DTWs_b), 3), np.round(np.std(DTWs_b), 3))
-    print(predpath, np.round(np.mean(DTWs_c), 3), np.round(np.std(DTWs_c), 3))
+    print(predpath, np.round(np.mean(SS_A),3), np.round(np.mean(SS_B),3), np.round(np.mean(SS_C),3))
+    print(predpath, np.round(np.mean(LEVs_a), 3), np.round(np.mean(LEVs_b), 3), np.round(np.mean(LEVs_c), 3))
+    print(predpath, np.round(np.mean(DTWs_a), 3), np.round(np.mean(DTWs_b), 3), np.round(np.mean(DTWs_c), 3))
 
-    df = pd.DataFrame(list(zip(DTWs_a,DTWs_b,DTWs_c, SS_A, SS_B, SS_C)), columns = ['DTW_A', 'DTW_B', 'DTW_C', 'SS_A', 'SS_B', 'SS_C'])
+    df = pd.DataFrame(list(zip(DTWs_a, DTWs_b, DTWs_c, LEVs_a, LEVs_b, LEVs_c, SS_A, SS_B, SS_C)), columns = ['DTW_A', 'DTW_B', 'DTW_C', 'LEV_A', 'LEV_B', 'LEV_C', 'SS_A', 'SS_B', 'SS_C'])
     Path.mkdir(Path('evaluation'), exist_ok=True)
-    df.to_csv(f'evaluation/{args["pred_name"]}.csv', index=False)
+    outname = args["pred_name"]
+    if args['best']:
+        outname += '_best'
+    df.to_csv(f'evaluation/{outname}.csv', index=False)
