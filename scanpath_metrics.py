@@ -25,7 +25,8 @@ DTWs_C = []
 LEVs_A = []
 LEVs_B = []
 LEVs_C = []
-    
+TASK_NAME = ['rv','f','fe']
+
 def calc_metrics(gt_files:list, imgname:str, im:Image, pred_path:str, is_best:bool=False):
     width, height = im.size # original image size
     if 'UMSS' in pred_path:
@@ -33,23 +34,25 @@ def calc_metrics(gt_files:list, imgname:str, im:Image, pred_path:str, is_best:bo
         if not os.path.exists(predCsv): return
         df_pred = pd.read_csv(predCsv)
         df_pred.columns = ['user', 'index', 'time', 'x', 'y']
+        df_pred = df_pred.drop(['time'],axis=1)
         # Normalization required
         df_pred['x'] = df_pred['x'] * width / 640
         df_pred['y'] = df_pred['y'] * height / 480
     elif 'deepgaze' in pred_path:
+        if not os.path.exists(os.path.join(pred_path, f'{imgname}.npy')): return
         predNpy = np.load(os.path.join(pred_path, f'{imgname}.npy'))
         predNpy[:,:,0] = predNpy[:,:,0] * width / 8192
         predNpy[:,:,1] = predNpy[:,:,1] * height / 4096
-    elif 'ours' in pred_path:
-        # TODO: add the code for our model
-        predCsv = os.path.join(pred_path, f'{imgname}.csv') # all of the predictions are in this file
-        if not os.path.exists(predCsv): return
-        df_pred = pd.read_csv(predCsv)
-        df_pred.columns = ['user', 'index', 'time', 'x', 'y']
 
     # GT
     if not gt_files: return
     for t, gt_files_type in enumerate(gt_files):
+        if 'ours' in pred_path:
+            predCsv = os.path.join(pred_path, f'{imgname}_{TASK_NAME[t]}.csv') # predictions of the task
+            if not os.path.exists(predCsv): return
+            df_pred = pd.read_csv(predCsv)
+            df_pred.columns = ['user', 'index', 'x', 'y']
+
         DTWs_type = []
         LEVs_type = []
         for gg in range(len(gt_files_type)):
@@ -67,9 +70,10 @@ def calc_metrics(gt_files:list, imgname:str, im:Image, pred_path:str, is_best:bo
                 if 'UMSS' in pred_path or 'ours' in pred_path:
                     df_predI = df_pred[df_pred['user'] == pp]
                     ########## 2D Metrics
-                    df_predI = df_predI.drop(['user', 'index', 'time'] ,axis=1).to_numpy()
+                    df_predI = df_predI.drop(['user', 'index'] ,axis=1).to_numpy()
                 elif 'deepgaze' in pred_path:
-                    df_predI = predNpy[pp-1]
+                    df_predI = predNpy[pp-1][:20,:]
+                if df_predI.size==0: continue
                 id_dtw = DTW(df_predI, df_gt)
                 id_lev = levenshtein_distance(df_predI, df_gt, width = width, height = height)
                 if not is_best:
@@ -125,7 +129,11 @@ def evaluate_ss(img_path: str, pred_path: str, gt_path: str, is_simplified:bool=
             for _, string_gt in enumerate(gt_strs_type):
                 id_ss_best = 0
                 for pp in range(1, len(gt_strs_type) + 1):
-                    strfile = f'{strpath}/{pp}/{imname}.txt'
+                    if 'ours' in pred_path:
+                        strfile = f'{strpath}/{pp}/{imname}_{TASK_NAME[t]}.txt'
+                    else:
+                        strfile = f'{strpath}/{pp}/{imname}.txt'
+                    if not os.path.exists(strfile): continue
                     with open(strfile,'r', encoding='utf-8') as f:
                         line = f.readline()
                         id_ss = nw_matching(string_gt, line)
@@ -133,7 +141,7 @@ def evaluate_ss(img_path: str, pred_path: str, gt_path: str, is_simplified:bool=
                             SS_type.append(id_ss)
                         elif id_ss > id_ss_best:
                             id_ss_best = id_ss
-                if is_best:
+                if is_best and id_ss_best > 0:
                     SS_type.append(id_ss_best)
             if t == 0:
                 SS_A.extend(SS_type)
@@ -160,6 +168,7 @@ def evaluate_gt(data_path: str, img_path: str, gt_path: str, is_best:bool=False)
     visualisations = glob(os.path.join(img_path,'*.png'))
     for idx in trange(len(visualisations)):
         imname = visualisations[idx].split('/')[-1].strip('.png')
+        # if not imname == 'economist_daily_chart_85': continue # only for DEBUG
         with Image.open(visualisations[idx]) as im:
             width, height = im.size
         gt_strs = get_gt_strings(gt_path, imname, False)

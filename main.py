@@ -176,16 +176,34 @@ def process_str(data_path: str, img_path: str, pred_path: str):
                     with open(os.path.join(pred_path, 'str', str(pp), imname+'.txt'), 'w') as f:
                         f.write(str(scanpath_str))
             elif 'deepgaze' in pred_path:
+                if not os.path.exists(os.path.join(pred_path, f'{imname}.npy')): continue
                 predNpy = np.load(os.path.join(pred_path, f'{imname}.npy')) # all predictions
                 predNpy[:,:,0] = predNpy[:,:,0] * w / 8192
                 predNpy[:,:,1] = predNpy[:,:,1] * h / 4096
                 for pp in range(np.shape(predNpy)[0]):
                     scanpath_str = ""
-                    for fix in range(np.shape(predNpy)[1]):
+                    # for fix in range(np.shape(predNpy)[1]):
+                    for fix in range(20):
                         scanpath_str += STR[id_map[int(predNpy[pp][fix][0]), int(predNpy[pp][fix][1])]]
                     Path(os.path.join(pred_path, 'str', str(pp))).mkdir(parents=True, exist_ok=True)
                     with open(os.path.join(pred_path, 'str', str(pp), imname+'.txt'), 'w') as f:
                         f.write(str(scanpath_str))
+            elif 'ours' in pred_path:
+                task_name = ['rv','f','fe']
+                for t in range(len(task_name)):
+                    predCsv = os.path.join(pred_path, f'{imname}_{task_name[t]}.csv') # predictions of the task
+                    if not os.path.exists(predCsv): continue
+                    df_pred = pd.read_csv(predCsv)
+                    df_pred.columns = ['user', 'index', 'x', 'y']
+                    for pp in range(1, 47):
+                        df_predI = df_pred[df_pred['user'] == pp]
+                        scanpath_str = ""
+                        # then write the id to the csv
+                        for _, row in df_predI.iterrows():
+                            scanpath_str += STR[id_map[int(row["x"]), int(row["y"])]]
+                        Path(os.path.join(pred_path, 'str', str(pp))).mkdir(parents=True, exist_ok=True)
+                        with open(os.path.join(pred_path, 'str', str(pp), f'{imname}_{task_name[t]}.txt'), 'w') as f:
+                            f.write(str(scanpath_str))
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -211,4 +229,6 @@ if __name__ == '__main__':
         predpath = os.path.join('evaluation', 'scanpaths', 'UMSS')
         process_str(args['data_path'],imgpath, predpath)
         predpath = os.path.join('evaluation', 'scanpaths', 'deepgaze')
+        process_str(args['data_path'],imgpath, predpath)
+        predpath = os.path.join('evaluation', 'scanpaths', 'ours')
         process_str(args['data_path'],imgpath, predpath)
