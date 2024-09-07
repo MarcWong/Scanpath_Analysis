@@ -168,7 +168,7 @@ def process_str(data_path: str, img_path: str, pred_path: str):
                 if not os.path.exists(predCsv): continue
                 df_pred = pd.read_csv(predCsv)
                 df_pred.columns = ['user', 'index', 'time', 'x', 'y']
-                for pp in range(1, 47):
+                for pp in range(1, 31):
                     df_predI = df_pred[df_pred['user'] == pp]
                     scanpath_str = ""
                     # then write the id to the csv
@@ -195,7 +195,7 @@ def process_str(data_path: str, img_path: str, pred_path: str):
                     if not os.path.exists(predCsv): continue
                     df_pred = pd.read_csv(predCsv)
                     df_pred.columns = ['user', 'index', 'x', 'y']
-                    for pp in range(1, 47):
+                    for pp in range(1, 31):
                         df_predI = df_pred[df_pred['user'] == pp]
                         scanpath_str = ""
                         # then write the id to the csv
