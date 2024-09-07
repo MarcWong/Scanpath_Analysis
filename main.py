@@ -1,4 +1,5 @@
 import os, sys
+import json
 import argparse
 from pathlib import Path
 from PIL import Image
@@ -8,7 +9,7 @@ import numpy as np
 import pandas as pd
 
 from utils.element_utils import get_id_map, get_BBoxes, get_BBoxes_task, plot_element_map
-from utils.csv_process import csv_process
+from utils.csv_process import csv_process, process_image
 from utils.scanpath_utils import pd2string, remove_duplicates
 
 STR = ['Z','a', 'b', 'c', 'T','L','A','M']
@@ -159,6 +160,7 @@ def process_str(data_path: str, img_path: str, pred_path: str):
         with Image.open(os.path.join(data_path, "images", f"{imname}.png")) as img:
             w, h = img.size
             id_map = get_id_map(bboxes, w, h)
+            task_name = ['rv','f','fe']
 
             # UMSS
             if 'UMSS' in pred_path:
@@ -182,14 +184,12 @@ def process_str(data_path: str, img_path: str, pred_path: str):
                 predNpy[:,:,1] = predNpy[:,:,1] * h / 4096
                 for pp in range(np.shape(predNpy)[0]):
                     scanpath_str = ""
-                    # for fix in range(np.shape(predNpy)[1]):
-                    for fix in range(20):
+                    for fix in range(np.shape(predNpy)[1]):
                         scanpath_str += STR[id_map[int(predNpy[pp][fix][0]), int(predNpy[pp][fix][1])]]
                     Path(os.path.join(pred_path, 'str', str(pp))).mkdir(parents=True, exist_ok=True)
                     with open(os.path.join(pred_path, 'str', str(pp), imname+'.txt'), 'w') as f:
                         f.write(str(scanpath_str))
             elif 'ours' in pred_path:
-                task_name = ['rv','f','fe']
                 for t in range(len(task_name)):
                     predCsv = os.path.join(pred_path, f'{imname}_{task_name[t]}.csv') # predictions of the task
                     if not os.path.exists(predCsv): continue
@@ -204,6 +204,28 @@ def process_str(data_path: str, img_path: str, pred_path: str):
                         Path(os.path.join(pred_path, 'str', str(pp))).mkdir(parents=True, exist_ok=True)
                         with open(os.path.join(pred_path, 'str', str(pp), f'{imname}_{task_name[t]}.txt'), 'w') as f:
                             f.write(str(scanpath_str))
+            elif 'VQA' in pred_path:
+                pred = os.path.join(pred_path, 'test_predicts.json')
+                metainfo = os.path.join(pred_path, 'AiR_fixations_test.json')
+                predJson = json.load(open(pred, 'r'))
+                metaJson = json.load(open(metainfo, 'r'))
+                img_name, task_type = process_image()
+                img_id = img_name[img_name['filename'] == imgname]['imageID'].to_numpy()[0]
+                metaJson = [x for x in metaJson if x['image_id'] == f'{img_id}.jpg']
+                for t in range(len(task_name)):
+                    for pp in range(30):
+                        scanpath_str = ""
+
+                        metaI = metaJson[30*t + pp]
+                        predI = [x for x in predJson if x['qid'] == metaI['question_id']]
+                        predI = predI[0]
+                        df_predI = np.stack((predI['X'], predI['Y']), axis=1)
+                        for fix in range(df_predI.shape[0]):
+                            scanpath_str += STR[id_map[int(df_predI[fix][0]), int(df_predI[fix][1])]]
+                        Path(os.path.join(pred_path, 'str', str(pp))).mkdir(parents=True, exist_ok=True)
+                        with open(os.path.join(pred_path, 'str', str(pp), f'{imname}_{task_name[t]}.txt'), 'w') as f:
+                            f.write(str(scanpath_str))
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -231,4 +253,6 @@ if __name__ == '__main__':
         predpath = os.path.join('evaluation', 'scanpaths', 'deepgaze')
         process_str(args['data_path'],imgpath, predpath)
         predpath = os.path.join('evaluation', 'scanpaths', 'ours')
+        process_str(args['data_path'],imgpath, predpath)
+        predpath = os.path.join('evaluation', 'scanpaths', 'VQA')
         process_str(args['data_path'],imgpath, predpath)

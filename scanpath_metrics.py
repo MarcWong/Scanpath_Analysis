@@ -8,6 +8,7 @@ Created on 20240830
 """
 
 import os
+import json
 from glob import glob
 import argparse
 import numpy as np
@@ -18,6 +19,7 @@ from tqdm import trange
 from pathlib import Path
 from utils.metrics import DTW, nw_matching, levenshtein_distance
 from utils.utils import get_gt_strings, get_gt_files
+from utils.csv_process import process_image
 
 DTWs_A = []
 DTWs_B = []
@@ -43,6 +45,14 @@ def calc_metrics(gt_files:list, imgname:str, im:Image, pred_path:str, is_best:bo
         predNpy = np.load(os.path.join(pred_path, f'{imgname}.npy'))
         predNpy[:,:,0] = predNpy[:,:,0] * width / 8192
         predNpy[:,:,1] = predNpy[:,:,1] * height / 4096
+    elif 'VQA' in pred_path:
+        pred = os.path.join(pred_path, 'test_predicts.json')
+        metainfo = os.path.join(pred_path, 'AiR_fixations_test.json')
+        predJson = json.load(open(pred, 'r'))
+        metaJson = json.load(open(metainfo, 'r'))
+        img_name, task_type = process_image()
+        img_id = img_name[img_name['filename'] == f'{imgname}.png']['imageID'].to_numpy()[0]
+        metaJson = [x for x in metaJson if x['image_id'] == f'{img_id}.jpg']
 
     # GT
     if not gt_files: return
@@ -72,7 +82,12 @@ def calc_metrics(gt_files:list, imgname:str, im:Image, pred_path:str, is_best:bo
                     ########## 2D Metrics
                     df_predI = df_predI.drop(['user', 'index'] ,axis=1).to_numpy()
                 elif 'deepgaze' in pred_path:
-                    df_predI = predNpy[pp-1][:20,:]
+                    df_predI = predNpy[pp-1]
+                elif 'VQA' in pred_path:
+                    metaI = metaJson[30*t + pp]
+                    predI = [x for x in predJson if x['qid'] == metaI['question_id']]
+                    predI = predI[0]
+                    df_predI = np.stack((predI['X'], predI['Y']), axis=1)
                 if df_predI.size==0: continue
                 id_dtw = DTW(df_predI, df_gt)
                 id_lev = levenshtein_distance(df_predI, df_gt, width = width, height = height)
@@ -129,7 +144,7 @@ def evaluate_ss(img_path: str, pred_path: str, gt_path: str, is_simplified:bool=
             for _, string_gt in enumerate(gt_strs_type):
                 id_ss_best = 0
                 for pp in range(1, len(gt_strs_type) + 1):
-                    if 'ours' in pred_path:
+                    if 'ours' in pred_path or 'VQA' in pred_path:
                         strfile = f'{strpath}/{pp}/{imname}_{TASK_NAME[t]}.txt'
                     else:
                         strfile = f'{strpath}/{pp}/{imname}.txt'
