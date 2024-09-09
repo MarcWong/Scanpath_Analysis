@@ -102,17 +102,27 @@ def calc_task_ratio(df: pd.DataFrame, ques: str) -> float:
         return np.round(df_str.count('3') / len(df_str), 4)
     return -1
 
-def print_metrics(df: pd.DataFrame):
+def print_df(df: pd.DataFrame):
     print('number_of_fixations', np.round(np.mean(df['number_of_fixations']), 1))
     print('saccade_len_m', np.round(np.mean(df['saccade_len_m']), 1))
-    print('fixation_task_ratio', np.round(np.mean(df['fixation_task_ratio']), 1))
-    print('title_ratio', np.round(np.mean(df['title_ratio']), 1))
-    print('axis_ratio', np.round(np.mean(df['axis_ratio']), 1))
-    print('mark_ratio', np.round(np.mean(df['mark_ratio']), 1))
+    print('fixation_task_ratio', np.round(np.mean(df['fixation_task_ratio']) * 100, 1))
+    print('title_ratio', np.round(np.mean(df['title_ratio']) * 100, 1))
+    print('mark_ratio', np.round(np.mean(df['mark_ratio']) * 100, 1))
+    print('axis_ratio', np.round(np.mean(df['axis_ratio']) * 100, 1))
     print('aoi_shifts', np.round(np.mean(df['aoi_shift']), 1))
     print('revisit_freq_title', np.round(np.mean(df['revisit_freq_title']), 1))
-    print('revisit_freq_axis', np.round(np.mean(df['revisit_freq_axis']), 1))
     print('revisit_freq_mark', np.round(np.mean(df['revisit_freq_mark']), 1))
+    print('revisit_freq_axis', np.round(np.mean(df['revisit_freq_axis']), 1))
+
+def print_metrics(df: pd.DataFrame, separate_type: bool = False):
+    question_types = ['A', 'B', 'C']
+    if separate_type:
+        for qtype in question_types:
+            dft= df[df['question_type'] == qtype]
+            print(f'Question type: {qtype}')
+            print_df(dft)
+    else:
+        print_df(df)
 
 def scanpath_analysis(img_path: str, gt_path: str, out_path: str, is_eval: bool = False):
     saliency_metrics_list = []
@@ -155,10 +165,10 @@ def scanpath_analysis(img_path: str, gt_path: str, out_path: str, is_eval: bool 
                 }
                 saliency_metrics_list.append(saliency_metrics)
     df = pd.DataFrame.from_dict(saliency_metrics_list)
-    print_metrics(df)
+    print_metrics(df, separate_type=True)
     df.to_csv(out_path, index = False, sep='\t')
 
-def scanpath_analysis_eval(pred_path: str, output_path: str):
+def scanpath_analysis_eval(pred_path: str, output_path: str, separate_type: bool = False):
     saliency_metrics_list = []
     questions = ['A', 'B', 'C']
     task_names = ['rv', 'f', 'fe']
@@ -201,7 +211,7 @@ def scanpath_analysis_eval(pred_path: str, output_path: str):
                 }
                 saliency_metrics_list.append(saliency_metrics)
     df = pd.DataFrame.from_dict(saliency_metrics_list)
-    print_metrics(df)
+    print_metrics(df, separate_type=separate_type)
 
     df.to_csv(output_path, index = False, sep='\t')
 
@@ -349,4 +359,4 @@ if __name__ == '__main__':
         print("analysing UMSS...")
         scanpath_analysis_eval(os.path.join('evaluation', 'scanpaths', 'UMSS'), os.path.join('evaluation', 'UMSS_analysis.tsv'))
         print("analysing ours...")
-        scanpath_analysis_eval(os.path.join('evaluation', 'scanpaths', 'ours'), os.path.join('evaluation', 'ours_analysis.tsv'))
+        scanpath_analysis_eval(os.path.join('evaluation', 'scanpaths', 'ours'), os.path.join('evaluation', 'ours_analysis.tsv'), separate_type=True)
