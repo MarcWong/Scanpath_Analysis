@@ -102,17 +102,25 @@ def calc_task_ratio(df: pd.DataFrame, ques: str) -> float:
         return np.round(df_str.count('3') / len(df_str), 4)
     return -1
 
+def print_m_std(df: pd.DataFrame, col: str, is_ratio: bool = False):
+    if is_ratio:
+        print(f'{col}_mean', np.round(np.mean(df[col]) * 100, 1))
+        print(f'{col}_std', np.round(np.std(df[col]) * 100, 1))
+    else:
+        print(f'{col}_mean', np.round(np.mean(df[col]), 1))
+        print(f'{col}_std', np.round(np.std(df[col]), 1))
+
 def print_df(df: pd.DataFrame):
-    print('number_of_fixations', np.round(np.mean(df['number_of_fixations']), 1))
-    print('saccade_len_m', np.round(np.mean(df['saccade_len_m']), 1))
-    print('fixation_task_ratio', np.round(np.mean(df['fixation_task_ratio']) * 100, 1))
-    print('title_ratio', np.round(np.mean(df['title_ratio']) * 100, 1))
-    print('mark_ratio', np.round(np.mean(df['mark_ratio']) * 100, 1))
-    print('axis_ratio', np.round(np.mean(df['axis_ratio']) * 100, 1))
-    print('aoi_shifts', np.round(np.mean(df['aoi_shift']), 1))
-    print('revisit_freq_title', np.round(np.mean(df['revisit_freq_title']), 1))
-    print('revisit_freq_mark', np.round(np.mean(df['revisit_freq_mark']), 1))
-    print('revisit_freq_axis', np.round(np.mean(df['revisit_freq_axis']), 1))
+    print_m_std(df, 'number_of_fixations')
+    print_m_std(df, 'saccade_len_m')
+    print_m_std(df, 'fixation_task_ratio', is_ratio=True)
+    print_m_std(df, 'title_ratio', is_ratio=True)
+    print_m_std(df, 'mark_ratio', is_ratio=True)
+    print_m_std(df, 'axis_ratio', is_ratio=True)
+    print_m_std(df, 'aoi_shift')
+    print_m_std(df, 'revisit_freq_title')
+    print_m_std(df, 'revisit_freq_mark')
+    print_m_std(df, 'revisit_freq_axis')
 
 def print_metrics(df: pd.DataFrame, separate_type: bool = False):
     question_types = ['A', 'B', 'C']
@@ -355,7 +363,7 @@ if __name__ == '__main__':
         print("analysing deepgaze...")
         scanpath_analysis_eval(os.path.join('evaluation', 'scanpaths', 'deepgaze'), os.path.join('evaluation', 'deepgaze_analysis.tsv'))
         print("analysing VQA...")
-        scanpath_analysis_eval(os.path.join('evaluation', 'scanpaths', 'VQA'), os.path.join('evaluation', 'VQA_analysis.tsv'))
+        scanpath_analysis_eval(os.path.join('evaluation', 'scanpaths', 'VQA'), os.path.join('evaluation', 'VQA_analysis.tsv'), separate_type=True)
         print("analysing UMSS...")
         scanpath_analysis_eval(os.path.join('evaluation', 'scanpaths', 'UMSS'), os.path.join('evaluation', 'UMSS_analysis.tsv'))
         print("analysing ours...")
