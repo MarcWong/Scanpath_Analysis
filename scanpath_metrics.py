@@ -270,8 +270,8 @@ if __name__ == '__main__':
         SS_A, SS_B, SS_C = evaluate_ss(imgpath, predpath, gtpath, is_simplified=args['is_simplified_ss'], is_best=args['best'])
 
     print(predpath, np.round(np.mean(SS_A),3), np.round(np.mean(SS_B),3), np.round(np.mean(SS_C),3))
-    print(predpath, np.round(np.mean(LEVs_a), 3), np.round(np.mean(LEVs_b), 3), np.round(np.mean(LEVs_c), 3))
-    print(predpath, np.round(np.mean(DTWs_a), 3), np.round(np.mean(DTWs_b), 3), np.round(np.mean(DTWs_c), 3))
+    print(predpath, np.round(np.mean(LEVs_a), 1), np.round(np.mean(LEVs_b), 1), np.round(np.mean(LEVs_c), 1))
+    print(predpath, np.round(np.mean(DTWs_a)), np.round(np.mean(DTWs_b)), np.round(np.mean(DTWs_c)))
 
     df = pd.DataFrame(list(zip(DTWs_a, DTWs_b, DTWs_c, LEVs_a, LEVs_b, LEVs_c, SS_A, SS_B, SS_C)), columns = ['DTW_A', 'DTW_B', 'DTW_C', 'LEV_A', 'LEV_B', 'LEV_C', 'SS_A', 'SS_B', 'SS_C'])
     Path.mkdir(Path('evaluation'), exist_ok=True)
