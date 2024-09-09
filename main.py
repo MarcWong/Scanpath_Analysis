@@ -102,15 +102,27 @@ def calc_task_ratio(df: pd.DataFrame, ques: str) -> float:
         return np.round(df_str.count('3') / len(df_str), 4)
     return -1
 
-def scanpath_analysis(img_path: str, out_file_path: str):
+def print_metrics(df: pd.DataFrame):
+    print('number_of_fixations', np.round(np.mean(df['number_of_fixations']), 1))
+    print('saccade_len_m', np.round(np.mean(df['saccade_len_m']), 1))
+    print('fixation_task_ratio', np.round(np.mean(df['fixation_task_ratio']), 1))
+    print('title_ratio', np.round(np.mean(df['title_ratio']), 1))
+    print('axis_ratio', np.round(np.mean(df['axis_ratio']), 1))
+    print('mark_ratio', np.round(np.mean(df['mark_ratio']), 1))
+    print('aoi_shifts', np.round(np.mean(df['aoi_shift']), 1))
+    print('revisit_freq_title', np.round(np.mean(df['revisit_freq_title']), 1))
+    print('revisit_freq_axis', np.round(np.mean(df['revisit_freq_axis']), 1))
+    print('revisit_freq_mark', np.round(np.mean(df['revisit_freq_mark']), 1))
+
+def scanpath_analysis(img_path: str, gt_path: str, out_path: str, is_eval: bool = False):
     saliency_metrics_list = []
-    visualisations = glob(img_path+'*.png')
+    visualisations = glob(img_path+'/*.png')
 
     for i in trange(len(visualisations)):
         visualisation = visualisations[i]
         imgname = os.path.basename(visualisation)
         imname, _ = os.path.splitext(imgname)
-        all_questions = glob(os.path.join(f'{out_file_path}/fixationsByVis/{imname}', '*'))
+        all_questions = glob(os.path.join(f'{gt_path}/fixationsByVis/{imname}', '*'))
         for question in all_questions:
             ques = os.path.basename(question)
 
@@ -125,7 +137,7 @@ def scanpath_analysis(img_path: str, out_file_path: str):
                     'participant': p,
                     'image': imname,
                     'question_type': ques,
-                    'number of fixations': df.shape[0],
+                    'number_of_fixations': df.shape[0],
                     'saccade_len_m': saccade_len_mean,
                     'saccade_len_std': saccade_len_std,
                     'aoi_shift': calc_aoi_shift(df['id']),
@@ -143,7 +155,8 @@ def scanpath_analysis(img_path: str, out_file_path: str):
                 }
                 saliency_metrics_list.append(saliency_metrics)
     df = pd.DataFrame.from_dict(saliency_metrics_list)
-    df.to_csv('./scanpath_analysis.tsv', index = False, sep='\t')
+    print_metrics(df)
+    df.to_csv(out_path, index = False, sep='\t')
 
 def scanpath_analysis_eval(pred_path: str, output_path: str):
     saliency_metrics_list = []
@@ -170,7 +183,7 @@ def scanpath_analysis_eval(pred_path: str, output_path: str):
                     'participant': p,
                     'image': imname,
                     'question_type': ques,
-                    'number of fixations': df.shape[0],
+                    'number_of_fixations': df.shape[0],
                     'saccade_len_m': saccade_len_mean,
                     'saccade_len_std': saccade_len_std,
                     'aoi_shift': calc_aoi_shift(df['id']),
@@ -188,6 +201,8 @@ def scanpath_analysis_eval(pred_path: str, output_path: str):
                 }
                 saliency_metrics_list.append(saliency_metrics)
     df = pd.DataFrame.from_dict(saliency_metrics_list)
+    print_metrics(df)
+
     df.to_csv(output_path, index = False, sep='\t')
 
 def process_str(data_path: str, img_path: str, pred_path: str):
@@ -305,7 +320,6 @@ if __name__ == '__main__':
     parser.add_argument('--process_gt', action='store_true')
     parser.add_argument('--process_baseline', action='store_true')
     parser.add_argument('--analysis_baseline', action='store_true')
-
     args = vars(parser.parse_args())
     Path(args['out_file_path']).mkdir(parents=True, exist_ok=True)
 
@@ -315,31 +329,24 @@ if __name__ == '__main__':
         print("generating bounding boxes...")
         csv_bounding_boxes(args['data_path'], args['out_file_path'])
         print("analysing scanpaths...")
-        scanpath_analysis(os.path.join(args['data_path'], 'images'), args['out_file_path'])
+        scanpath_analysis(os.path.join(args['data_path'], 'images'), args['out_file_path'], 'scanpath_analysis.tsv')
 
     if args['process_baseline']:
         print("processing baseline methods...")
         imgpath = os.path.join('evaluation', 'images')
-        predpath = os.path.join('evaluation', 'scanpaths', 'UMSS')
-        process_str(args['data_path'],imgpath, predpath)
-        predpath = os.path.join('evaluation', 'scanpaths', 'deepgaze')
-        process_str(args['data_path'],imgpath, predpath)
-        predpath = os.path.join('evaluation', 'scanpaths', 'ours')
-        process_str(args['data_path'],imgpath, predpath)
-        predpath = os.path.join('evaluation', 'scanpaths', 'VQA')
-        process_str(args['data_path'],imgpath, predpath)
+        process_str(args['data_path'],imgpath, os.path.join('evaluation', 'scanpaths', 'deepgaze'))
+        process_str(args['data_path'],imgpath, os.path.join('evaluation', 'scanpaths', 'VQA'))
+        process_str(args['data_path'],imgpath, os.path.join('evaluation', 'scanpaths', 'UMSS'))
+        process_str(args['data_path'],imgpath, os.path.join('evaluation', 'scanpaths', 'ours'))
 
     if args['analysis_baseline']:
-        print("analysing scanpaths...")
-        predpath = os.path.join('evaluation', 'scanpaths', 'UMSS')
-        output_path = os.path.join('evaluation', 'UMSS_analysis.tsv')
-        scanpath_analysis_eval(predpath, output_path)
-        predpath = os.path.join('evaluation', 'scanpaths', 'deepgaze')
-        output_path = os.path.join('evaluation', 'deepgaze_analysis.tsv')
-        scanpath_analysis_eval(predpath, output_path)
-        predpath = os.path.join('evaluation', 'scanpaths', 'ours')
-        output_path = os.path.join('evaluation', 'ours_analysis.tsv')
-        scanpath_analysis_eval(predpath, output_path)
-        predpath = os.path.join('evaluation', 'scanpaths', 'VQA')
-        output_path = os.path.join('evaluation', 'VQA_analysis.tsv')
-        scanpath_analysis_eval(predpath, output_path)
+        print("analysing Human...")
+        scanpath_analysis(os.path.join('evaluation', 'images'), args['out_file_path'], os.path.join('evaluation', 'human_eval.tsv'), is_eval=True)
+        print("analysing deepgaze...")
+        scanpath_analysis_eval(os.path.join('evaluation', 'scanpaths', 'deepgaze'), os.path.join('evaluation', 'deepgaze_analysis.tsv'))
+        print("analysing VQA...")
+        scanpath_analysis_eval(os.path.join('evaluation', 'scanpaths', 'VQA'), os.path.join('evaluation', 'VQA_analysis.tsv'))
+        print("analysing UMSS...")
+        scanpath_analysis_eval(os.path.join('evaluation', 'scanpaths', 'UMSS'), os.path.join('evaluation', 'UMSS_analysis.tsv'))
+        print("analysing ours...")
+        scanpath_analysis_eval(os.path.join('evaluation', 'scanpaths', 'ours'), os.path.join('evaluation', 'ours_analysis.tsv'))

@@ -1,4 +1,4 @@
-participant	image	question_type	number of fixations	saccade_len_m	saccade_len_std	aoi_shift	first_time_on_task	fixation_task_ratio	title_ratio	legend_ratio	axis_ratio	mark_ratio	revisit_freq_title	revisit_freq_legend	revisit_freq_axis	revisit_freq_mark	scanpath_str
+participant	image	question_type	number_of_fixations	saccade_len_m	saccade_len_std	aoi_shift	first_time_on_task	fixation_task_ratio	title_ratio	legend_ratio	axis_ratio	mark_ratio	revisit_freq_title	revisit_freq_legend	revisit_freq_axis	revisit_freq_mark	scanpath_str
 17	economist_daily_chart_35_rv	A	50	172.809	163.835	8	-1	0.0	0.04	0.0	0.92	0.04	2	0	4	2	TAMAMAAATAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 17	economist_daily_chart_85_rv	A	50	193.623	210.783	22	32	0.04	0.06	0.0	0.44	0.42	2	0	11	9	ATTATAAAAAZMMMMMAMAMMAAAAMAMAAZMAAZAMMAMAZAMMMMMMM
 17	economist_daily_chart_392_rv	A	50	258.256	205.357	9	-1	0.0	0.04	0.0	0.46	0.14	2	0	4	3	TAAAAAZAAAMMMMZZTAAZZAAZAAZAAZZZMZZAZMMAAAAZZZZAZA
