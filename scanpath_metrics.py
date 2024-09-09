@@ -200,7 +200,7 @@ def evaluate_gt(data_path: str, img_path: str, gt_path: str, is_best:bool=False)
                 df_gt = df_gt.drop(['index','time'],axis=1).to_numpy()
 
                 for pp in range(len(gt_files_type)):
-                    if pp == gg: continue
+                    if is_best and pp == gg: continue
                     df_gt_2 = pd.read_csv(gt_files_type[pp], sep='\t').dropna()
                     if df_gt_2.empty: continue
                     df_gt_2.columns = ['time', 'index', 'x', 'y']
@@ -234,7 +234,7 @@ def evaluate_gt(data_path: str, img_path: str, gt_path: str, is_best:bool=False)
             for gg, string_g in enumerate(gt_strs_type):
                 id_ss_best = 0
                 for pp, string_p in enumerate(gt_strs_type):
-                    if pp == gg: continue
+                    if is_best and pp == gg: continue
                     id_ss = nw_matching(string_g, string_p)
                     if not is_best:
                         SS_type.append(id_ss)
