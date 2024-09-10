@@ -320,8 +320,8 @@ def process_str(data_path: str, img_path: str, pred_path: str):
                         predI = predI[0]
                         df_predI = np.stack((predI['X'], predI['Y']), axis=1)
                         for fix in range(df_predI.shape[0]):
-                            xx = int(df_predI[fix][0])
-                            yy = int(df_predI[fix][1])
+                            xx = int(df_predI[fix][0] * w / 320)
+                            yy = int(df_predI[fix][1] * h / 240)
                             scanpath_str += STR[id_map[xx, yy]]
                             new_list.append([xx, yy, id_map[xx, yy],STR[id_map[xx, yy]], id_map_task[xx, yy]])
                         Path(os.path.join(pred_path, 'str', str(pp))).mkdir(parents=True, exist_ok=True)
